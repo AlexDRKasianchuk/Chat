@@ -1,113 +1,202 @@
 import firebase from 'firebase';
 
 const USER_LOGIN_REQUEST = 'USER_LOGIN_REQUEST',
-USER_LOGIN_SUCCESS= 'USER_LOGIN_SUCCESS',
-USER_LOGIN_FAILURE= 'USER_LOGIN_FAILURE';
+    USER_LOGIN_SUCCESS = 'USER_LOGIN_SUCCESS',
+    USER_LOGIN_FAILURE = 'USER_LOGIN_FAILURE',
+    USER_LOGOUT_REQUEST = 'USER_LOGOUT_REQUEST',
+    USER_LOGOUT_SUCCESS = 'USER_LOGOUT_SUCCESS',
+    USER_LOGOUT_FAILURE = 'USER_LOGOUT_FAILURE';
 
 
-export const singup = (user) =>{
+export const singup = (user) => {
 
-    return async (dispatch)=>{
+    return async (dispatch) => {
         const db = firebase.firestore();
 
-        dispatch({type:USER_LOGIN_REQUEST})
+        dispatch({
+            type: USER_LOGIN_REQUEST
+        })
 
         firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
-        .then(data=>{
-            console.log(data)
-            const currentUser = firebase.auth().currentUser;
-            const name = `${user.firstName} ${user.lastName}`
-            currentUser.updateProfile({
-                displayName: name
-            })
-            .then(()=>{
-                //if you are here means it is update succesfull
-                db.collection('users').add({
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    uid: data.user.uid,
-                    createdAt: new Date()
-                })
-                .then(()=>{
-                    //succesful
-                    const loggedInUser={
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        uid: data.user.uid,
-                        email: user.email
-                    }
-                   localStorage.setItem('user',JSON.stringify(loggedInUser));
-                    console.log('user logged in succesfully!!')
-                    dispatch({
-                        type: USER_LOGIN_SUCCESS,
-                        payload: {user: loggedInUser}
+            .then(data => {
+                console.log(data)
+                const currentUser = firebase.auth().currentUser;
+                const name = `${user.firstName} ${user.lastName}`
+                currentUser.updateProfile({
+                        displayName: name
                     })
-                })
-                .catch(error=>{
-                    dispatch({
-                        type: USER_LOGIN_FAILURE,
-                        payload: {error}
+                    .then(() => {
+                        //if you are here means it is update succesfull
+                        db.collection('users')
+                            .doc(data.user.uid)
+                            .set({
+                                firstName: user.firstName,
+                                lastName: user.lastName,
+                                uid: data.user.uid,
+                                createdAt: new Date()
+                            })
+                            .then(() => {
+                                //succesful
+                                const loggedInUser = {
+                                    firstName: user.firstName,
+                                    lastName: user.lastName,
+                                    uid: data.user.uid,
+                                    email: user.email
+                                }
+                                localStorage.setItem('user', JSON.stringify(loggedInUser));
+                                console.log('user logged in succesfully!!')
+                                dispatch({
+                                    type: USER_LOGIN_SUCCESS,
+                                    payload: {
+                                        user: loggedInUser
+                                    }
+                                })
+                            })
+                            .catch(error => {
+                                dispatch({
+                                    type: USER_LOGIN_FAILURE,
+                                    payload: {
+                                        error
+                                    }
+                                })
+                                console.log(error)
+                            })
                     })
-                    console.log(error)
-                })
             })
-        })
-        .catch(error=>{
-            console.log(error)
-        })
-    } 
-}
-
-export const sigin = (user)=>{
-    return async dispatch =>{
-        
-    dispatch({type:USER_LOGIN_REQUEST})
-
-        firebase.auth().signInWithEmailAndPassword(user.email, user.password)
-        .then((data)=>{
-            const name = data.user.displayName.split(' ');
-            const firstName = name[0];
-            const lastName = name[1];
-            
-            const loggedInUser={
-                firstName,
-                lastName,
-                uid: data.user.uid,
-                email: data.user.email
-            }
-
-            localStorage.setItem('user',JSON.stringify(loggedInUser));
-            dispatch({
-                type:USER_LOGIN_SUCCESS,
-                payload: {user:loggedInUser} 
+            .catch(error => {
+                console.log(error)
             })
-        })
-        .catch(error=>{
-            console.log(error)    
-            dispatch({
-                type: USER_LOGIN_FAILURE,
-                payload: {error}
-            })
-        })
     }
 }
 
-export const isLoggedInUser = () =>{
-    return async dispatch=>{
+export const sigin = (user) => {
+    return async dispatch => {
 
-        const user = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')):null
+        dispatch({
+            type: USER_LOGIN_REQUEST
+        })
 
-        if(user){
+        firebase.auth().signInWithEmailAndPassword(user.email, user.password)
+            .then((data) => {
+                const db = firebase.firestore();
+                db.collection('users').doc(data.user.uid)
+                .update({
+                    isOnline:true
+                })
+                .then(()=>{
+                    const name = data.user.displayName.split(' ');
+                    const firstName = name[0];
+                    const lastName = name[1];
+    
+                    const loggedInUser = {
+                        firstName,
+                        lastName,
+                        uid: data.user.uid,
+                        email: data.user.email
+                    }
+    
+                    localStorage.setItem('user', JSON.stringify(loggedInUser));
+                    dispatch({
+                        type: USER_LOGIN_SUCCESS,
+                        payload: {
+                            user: loggedInUser
+                        }
+                    })
+
+                }).catch(error=>{
+                    console.log(error)
+                })
+            })
+            .catch(error => {
+                console.log(error)
+                dispatch({
+                    type: USER_LOGIN_FAILURE,
+                    payload: {
+                        error
+                    }
+                })
+            })
+    }
+}
+
+export const isLoggedInUser = () => {
+    return async dispatch => {
+
+        const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
+
+        if (user) {
             dispatch({
                 type: USER_LOGIN_SUCCESS,
-                payload: {user}
+                payload: {
+                    user
+                }
             })
-        }else{
+        } else {
             dispatch({
                 type: USER_LOGIN_FAILURE,
-                payload: {error: 'Login please again'}
+                payload: {
+                    error: 'Login please again'
+                }
             })
         }
 
     }
 }
+
+export const logout = (uid) =>{
+    return async dispatch=>{
+        dispatch({type:USER_LOGOUT_REQUEST})
+
+        firebase.auth().signOut().then(()=>{
+            localStorage.clear()
+            dispatch({type: USER_LOGOUT_SUCCESS})
+        })
+        .catch(error=>{
+            console.log(error)
+            dispatch({
+                type: USER_LOGOUT_FAILURE, 
+                payload: {error}
+            })
+        })
+    }
+} 
+
+// export const logout = (uid) => {
+//     return async dispatch => {
+//         dispatch({
+//             type: USER_LOGOUT_REQUEST
+//         });
+//         //Now lets logout user
+//         const db = firebase.firestore();
+//         db.collection('users')
+//             .doc(uid)
+//             .update({
+//                 isOnline: false
+//             })
+//             .then(() => {
+//                 debugger
+//                 firebase.auth()
+//                     .signOut()
+//                     .then(() => {
+//                         //successfully
+//                         localStorage.clear();
+//                         console.log('localStorage.clear')
+//                         dispatch({
+//                             type: USER_LOGOUT_SUCCESS
+//                         });
+//                     })
+//                     .catch(error => {
+//                         console.log(error);
+//                         dispatch({
+//                             type: USER_LOGOUT_FAILURE,
+//                             payload: {
+//                                 error
+//                             }
+//                         })
+//                     })
+//             })
+//             .catch(error => {
+//                 console.log(error);
+//             })
+//     }
+// }

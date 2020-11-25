@@ -12,8 +12,9 @@ const Register = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
-  const ss = useSelector(state=>state.auth);
-  if(ss.authenticated){
+  const auth = useSelector(state=>state.auth);
+
+  if(auth.authenticated){
     return <Redirect to={'/'} />
 }
 

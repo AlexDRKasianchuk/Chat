@@ -16,7 +16,7 @@ const auth = useSelector(state=>state.auth)
     if(!auth.authenticated){
         dispatch(isLoggedInUser())
     }
-})
+},[])
 
 
   return (
