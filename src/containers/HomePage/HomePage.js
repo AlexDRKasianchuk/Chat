@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './HomePage.css';
 import Layout from '../../components/Layout/Layout';
 import { useDispatch, useSelector } from 'react-redux';
-import { getRealtimeUsers} from '../../action/user.action';
+import { getRealtimeConversations, getRealtimeUsers, updateMessage} from '../../action/user.action';
 
 const User = (props) => {
   const {user, onClick} = props;
@@ -29,60 +29,60 @@ const HomePage = (props) => {
   const [chatUser, setChatUser] = useState('');
   const [message, setMessage] = useState('');
   const [userUid, setUserUid] = useState(null);
-
+	let unsubscribe
 
 
   useEffect(() => {
-    dispatch(getRealtimeUsers(auth.uid))
-    // .then(unsubscribe => {
-    //   return unsubscribe;
-    // },[])
-    // .catch(error => {
-    //   console.log(error);
-    // }
+     unsubscribe = dispatch(getRealtimeUsers(auth.uid))
+    .then(unsubscribe => {
+      return unsubscribe;
+    })
+    .catch(error => {
+      console.log(error);
+	  })
+	 
   })
 
-  //componentWillUnmount
-  // useEffect(() => {
-  //   return () => {
-  //     //cleanup
-  //     unsubscribe.then(f => f()).catch(error => console.log(error));
-
-  //   }
-  // },[]);
+  
+   useEffect(() => {
+    return () => {
+       //cleanup
+	   unsubscribe
+	   .then(f => f())
+	   .catch(error => console.log(error));
+     }
+   });
 
 
    const initChat = (user) => {
+     setChatStarted(true)
+     setChatUser(`${user.firstName} ${user.lastName}`)
+	 setUserUid(user.uid);
 
-  //   setChatStarted(true)
-  //   setChatUser(`${user.firstName} ${user.lastName}`)
-  //   setUserUid(user.uid);
-
-  //   console.log(user);
-
-  //   dispatch(getRealtimeConversations({ uid_1: auth.uid, uid_2: user.uid }));
-
+	 
+	 dispatch(getRealtimeConversations({ uid_1: auth.uid, uid_2: user.uid }));
    }
 
   const submitMessage = (e) => {
+    const msgObj = {
+      user_uid_1: auth.uid,
+      user_uid_2: userUid,
+      message
+    }
 
-    // const msgObj = {
-    //   user_uid_1: auth.uid,
-    //   user_uid_2: userUid,
-    //   message
-    // }
 
-
-    // if(message !== ""){
-    //   dispatch(updateMessage(msgObj))
-    //   .then(() => {
-    //     setMessage('')
-    //   });
-    // }
+     if(message !== ""){
+       dispatch(updateMessage(msgObj))
+       .then(() => {
+         setMessage('')
+	   }
+	   );
+     }
 
     //console.log(msgObj);
 
   }
+
   return (
     <Layout>
       <section className="container">
@@ -104,15 +104,15 @@ const HomePage = (props) => {
         <div className="chatArea">
             <div className="chatHeader"> 
             {
-              chatStarted ? chatUser : ''
+              chatStarted ? chatUser : 'Select user from sidebar'
             }
             </div>
             <div className="messageSections">
                 {
                   chatStarted ? 
                   user.conversations.map(con =>
-                    <div style={{ textAlign: con.user_uid_1 === auth.uid ? 'right' : 'left' }}>
-                    <p className="messageStyle" >{con.message}</p>
+                    <div  style={{ textAlign: con.user_uid_1 === auth.uid ? 'right' : 'left' }}>
+                    <p className="messageStyle">{con.message}</p>
                   </div> )
                   : null
                 }
