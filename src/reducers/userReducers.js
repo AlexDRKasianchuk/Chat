@@ -12,7 +12,7 @@ const userReducers= (state = intiState, action) => {
 
     switch(action.type){
         case GET_REALTIME_USERS_REQUEST:
-            return state;
+           return state;
         case GET_REALTIME_USERS_SUCCESS:
             return {
                 ...state,
@@ -28,7 +28,7 @@ const userReducers= (state = intiState, action) => {
                 ...state,
                 conversations: []
             }
-            default: return state;
+        default: return state;
         
     }
         

@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import './HomePage.css';
 import Layout from '../../components/Layout/Layout';
 import { useDispatch, useSelector } from 'react-redux';
-import { getRealtimeUsers, updateMessage, getRealtimeConversations } from '../../action/user.action';
+import { getRealtimeUsers} from '../../action/user.action';
 
 const User = (props) => {
-
   const {user, onClick} = props;
 
   return (
     <div onClick={() => onClick(user)} className="displayName">
                   <div className="displayPic">
-                      <img src="https://i.pinimg.com/originals/be/ac/96/beac96b8e13d2198fd4bb1d5ef56cdcf.jpg" alt="" />
+                      <img src="https://www.tuktukdesign.com/wp-content/uploads/2020/01/avatar-icon-vector.jpg" alt="" />
                   </div>
                   <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between', margin: '0 10px'}}>
                       <span style={{fontWeight: 500}}>{user.firstName} {user.lastName}</span>
@@ -30,76 +29,64 @@ const HomePage = (props) => {
   const [chatUser, setChatUser] = useState('');
   const [message, setMessage] = useState('');
   const [userUid, setUserUid] = useState(null);
-  let unsubscribe;
 
 
 
   useEffect(() => {
-
-    unsubscribe = dispatch(getRealtimeUsers(auth.uid))
-    .then(unsubscribe => {
-      return unsubscribe;
-    })
-    .catch(error => {
-      console.log(error);
-    },[])
-
-    
-
-
-  });
-
-  //console.log(user);
+    dispatch(getRealtimeUsers(auth.uid))
+    // .then(unsubscribe => {
+    //   return unsubscribe;
+    // },[])
+    // .catch(error => {
+    //   console.log(error);
+    // }
+  })
 
   //componentWillUnmount
-  useEffect(() => {
-    return () => {
-      //cleanup
-      unsubscribe.then(f => f()).catch(error => console.log(error));
+  // useEffect(() => {
+  //   return () => {
+  //     //cleanup
+  //     unsubscribe.then(f => f()).catch(error => console.log(error));
 
-    }
-  },[]);
+  //   }
+  // },[]);
 
 
-  const initChat = (user) => {
+   const initChat = (user) => {
 
-    setChatStarted(true)
-    setChatUser(`${user.firstName} ${user.lastName}`)
-    setUserUid(user.uid);
+  //   setChatStarted(true)
+  //   setChatUser(`${user.firstName} ${user.lastName}`)
+  //   setUserUid(user.uid);
 
-    console.log(user);
+  //   console.log(user);
 
-    dispatch(getRealtimeConversations({ uid_1: auth.uid, uid_2: user.uid }));
+  //   dispatch(getRealtimeConversations({ uid_1: auth.uid, uid_2: user.uid }));
 
-  }
+   }
 
   const submitMessage = (e) => {
 
-    const msgObj = {
-      user_uid_1: auth.uid,
-      user_uid_2: userUid,
-      message
-    }
+    // const msgObj = {
+    //   user_uid_1: auth.uid,
+    //   user_uid_2: userUid,
+    //   message
+    // }
 
 
-    if(message !== ""){
-      dispatch(updateMessage(msgObj))
-      .then(() => {
-        setMessage('')
-      });
-    }
+    // if(message !== ""){
+    //   dispatch(updateMessage(msgObj))
+    //   .then(() => {
+    //     setMessage('')
+    //   });
+    // }
 
     //console.log(msgObj);
 
   }
-
   return (
     <Layout>
       <section className="container">
-
         <div className="listOfUsers">
-
-
           {
             user.users.length > 0 ?
             user.users.map(user => {
@@ -111,12 +98,10 @@ const HomePage = (props) => {
                   />
               );
             }) : null
-          }
-                    
+          }      
         </div>
 
         <div className="chatArea">
-            
             <div className="chatHeader"> 
             {
               chatStarted ? chatUser : ''
@@ -131,9 +116,8 @@ const HomePage = (props) => {
                   </div> )
                   : null
                 }
-                
-
             </div>
+
             {
               chatStarted ? 
               <div className="chatControls">
@@ -145,7 +129,7 @@ const HomePage = (props) => {
                 <button onClick={submitMessage}>Send</button>
             </div> : null
             }
-            
+
         </div>
     </section>
   </Layout>

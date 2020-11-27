@@ -26,14 +26,15 @@ export const singup = (user) => {
                         displayName: name
                     })
                     .then(() => {
-                        //if you are here means it is update succesfull
+                        //if you are here means it is update succesfully
                         db.collection('users')
                             .doc(data.user.uid)
                             .set({
                                 firstName: user.firstName,
                                 lastName: user.lastName,
                                 uid: data.user.uid,
-                                createdAt: new Date()
+                                createdAt: new Date(),
+                                isOnline: true
                             })
                             .then(() => {
                                 //succesful
@@ -80,32 +81,32 @@ export const sigin = (user) => {
             .then((data) => {
                 const db = firebase.firestore();
                 db.collection('users').doc(data.user.uid)
-                .update({
-                    isOnline:true
-                })
-                .then(()=>{
-                    const name = data.user.displayName.split(' ');
-                    const firstName = name[0];
-                    const lastName = name[1];
-    
-                    const loggedInUser = {
-                        firstName,
-                        lastName,
-                        uid: data.user.uid,
-                        email: data.user.email
-                    }
-    
-                    localStorage.setItem('user', JSON.stringify(loggedInUser));
-                    dispatch({
-                        type: USER_LOGIN_SUCCESS,
-                        payload: {
-                            user: loggedInUser
-                        }
+                    .update({
+                        isOnline: true
                     })
+                    .then(() => {
+                        const name = data.user.displayName.split(' ');
+                        const firstName = name[0];
+                        const lastName = name[1];
 
-                }).catch(error=>{
-                    console.log(error)
-                })
+                        const loggedInUser = {
+                            firstName,
+                            lastName,
+                            uid: data.user.uid,
+                            email: data.user.email
+                        }
+
+                        localStorage.setItem('user', JSON.stringify(loggedInUser));
+                        dispatch({
+                            type: USER_LOGIN_SUCCESS,
+                            payload: {
+                                user: loggedInUser
+                            }
+                        })
+
+                    }).catch(error => {
+                        console.log(error)
+                    })
             })
             .catch(error => {
                 console.log(error)
@@ -143,60 +144,42 @@ export const isLoggedInUser = () => {
     }
 }
 
-export const logout = (uid) =>{
-    return async dispatch=>{
-        dispatch({type:USER_LOGOUT_REQUEST})
-
-        firebase.auth().signOut().then(()=>{
-            localStorage.clear()
-            dispatch({type: USER_LOGOUT_SUCCESS})
+export const logout = (uid) => {
+    return async dispatch => {
+        dispatch({
+            type: USER_LOGOUT_REQUEST
         })
-        .catch(error=>{
-            console.log(error)
-            dispatch({
-                type: USER_LOGOUT_FAILURE, 
-                payload: {error}
+
+        const db = firebase.firestore();
+
+        db.collection('users')
+            .doc(uid)
+            .update({
+                isOnline: false,
             })
-        })
-    }
-} 
+            .then(() => {
+                firebase.auth()
+                    .signOut()
+                    .then(() => {
+                        localStorage.clear()
+                        dispatch({
+                            type: USER_LOGOUT_SUCCESS
+                        })
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        dispatch({
+                            type: USER_LOGOUT_FAILURE,
+                            payload: {
+                                error
+                            }
+                        })
+                    })
 
-// export const logout = (uid) => {
-//     return async dispatch => {
-//         dispatch({
-//             type: USER_LOGOUT_REQUEST
-//         });
-//         //Now lets logout user
-//         const db = firebase.firestore();
-//         db.collection('users')
-//             .doc(uid)
-//             .update({
-//                 isOnline: false
-//             })
-//             .then(() => {
-//                 debugger
-//                 firebase.auth()
-//                     .signOut()
-//                     .then(() => {
-//                         //successfully
-//                         localStorage.clear();
-//                         console.log('localStorage.clear')
-//                         dispatch({
-//                             type: USER_LOGOUT_SUCCESS
-//                         });
-//                     })
-//                     .catch(error => {
-//                         console.log(error);
-//                         dispatch({
-//                             type: USER_LOGOUT_FAILURE,
-//                             payload: {
-//                                 error
-//                             }
-//                         })
-//                     })
-//             })
-//             .catch(error => {
-//                 console.log(error);
-//             })
-//     }
-// }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+
+    }
+}
