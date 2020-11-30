@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
 import Layout from '../../components/Layout/Layout'
 import Card from '../../components/UI/Card/Card'
-import {singup} from '../../action/auth.action';
 import { useDispatch, useSelector} from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import { singup } from '../../reducers/authReducers';
 
 const Register = (props) => {
 

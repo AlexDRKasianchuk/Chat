@@ -1,9 +1,9 @@
 import React,{ useState}from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import { sigin } from '../../action/auth.action'
 import Layout from '../../components/Layout/Layout'
 import Card from '../../components/UI/Card/Card'
+import { sigin } from '../../reducers/authReducers'
 import './LoginPage.css'
 
 const LoginPage = (props) => {

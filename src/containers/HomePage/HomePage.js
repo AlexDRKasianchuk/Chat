@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './HomePage.css';
 import Layout from '../../components/Layout/Layout';
 import { useDispatch, useSelector } from 'react-redux';
-import { getRealtimeConversations, getRealtimeUsers, updateMessage} from '../../action/user.action';
+import { getRealtimeConversations, getRealtimeUsers, updateMessage} from './../../reducers/userReducers';
+
 
 const User = (props) => {
   const {user, onClick} = props;

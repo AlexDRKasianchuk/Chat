@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import {BrowserRouter as Router, Route } from 'react-router-dom';
-import { isLoggedInUser } from './action/auth.action';
 import './App.css';
 import PrivateRoute from './components/PrivateRoute';
 import HomePage from './containers/HomePage/HomePage';
 import LoginPage from './containers/LoginPage/LoginPage';
 import Register from './containers/Register/Register';
+import { isLoggedInUser } from './reducers/authReducers';
 
 function App() {
 const dispatch = useDispatch();
