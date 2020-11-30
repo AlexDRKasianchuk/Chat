@@ -16,7 +16,7 @@ const Header = (props) => {
 	return (
 		<header className='header'>
 			<div style={{ display: 'flex' }}>
-				<NavLink to={'/'}> <div className="logo">React messenger</div></NavLink>
+				<div className="logo">React messenger</div>
 
 				{
 					!auth.authenticated ?

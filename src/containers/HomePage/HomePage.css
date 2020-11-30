@@ -66,6 +66,9 @@
     height: 100%;
     object-fit: cover;
 }
+.displayName:hover{
+    background-color: rgb(187, 184, 184);
+}
 
 .messageStyle{
     background: skyblue;
@@ -93,6 +96,6 @@
     box-shadow: 0 0 10px 0 #16e316;
 }
 .onlineStatus.off{
-    background: green;
+    background: rgb(100, 98, 98);
     box-shadow: 0 0 0 0;
 }

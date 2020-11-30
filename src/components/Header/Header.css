@@ -28,6 +28,9 @@
     text-shadow: 0 0;
     text-decoration: none;
 }
+.menu > li > a:hover{
+    text-shadow: 0 0 10px #fff;
+}
 
 .leftMenu{
     display: flex; 
@@ -41,6 +44,9 @@
 
 .leftMenu > li > a{
     color: #fff;
+}
+.leftMenu > li > a:hover{
+    text-shadow: 0 0 10px #fff;
 }
 
 .leftMenu > li > a.active{

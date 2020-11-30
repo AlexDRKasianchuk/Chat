@@ -87,9 +87,6 @@ export const getRealtimeConversations = (user) => {
 
                 
             });
-
-            
-            console.log(conversations);
         })
     }
 }
