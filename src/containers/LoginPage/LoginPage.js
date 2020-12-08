@@ -12,14 +12,6 @@ const LoginPage = (props) => {
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
     const auth = useSelector(state=>state.auth);
-
-    // useEffect(()=>{
-    //     if(!auth.authenticated){
-    //         dispatch(isLoggedInUser())
-    //     }
-    // },[])
-
-
     const userLogin = (e) =>{
         e.preventDefault();
         if(email===''){
@@ -34,7 +26,6 @@ const LoginPage = (props) => {
 if(auth.authenticated){
     return <Redirect to={'/'} />
 }
-
 
 return(
       <Layout>
@@ -54,7 +45,6 @@ return(
           </div>
       </Layout>
    )
-
  }
 
 export default LoginPage

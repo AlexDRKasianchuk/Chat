@@ -5,19 +5,12 @@ import { logout } from '../../reducers/authReducers'
 import './Header.css'
 
 const Header = (props) => {
-
 	const dispatch = useDispatch();
 	const auth = useSelector(state => state.auth);
-
-	// const logout = () => {
-	// 	dispatch(logout())
-	// }
-
 	return (
 		<header className='header'>
 			<div style={{ display: 'flex' }}>
 				<div className="logo">React messenger</div>
-
 				{
 					!auth.authenticated ?
 						<ul className="leftMenu">
@@ -28,10 +21,7 @@ const Header = (props) => {
 								<NavLink to={'/singup'}>Sing up</NavLink>
 							</li>
 						</ul> : null
-
 				}
-
-
 			</div>
 			<div style={{ margin: '20px 0', color: '#fff', fontWeight: 'bold' }}>
 				{auth.authenticated ? `Hi ${auth.firstName} ${auth.lastName}` : ''}
@@ -43,14 +33,11 @@ const Header = (props) => {
 							<Link to={'#'} onClick={() => {
 								dispatch(logout(auth.uid))
 							}}>Logout</Link>
-							
 						</li> : null
 				}
-
 			</ul>
 		</header>
 	)
-
 }
 
 export default Header
