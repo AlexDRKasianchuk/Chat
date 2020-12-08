@@ -42,6 +42,7 @@ const userReducers= (state = intiState, action) => {
 export const getRealtimeUsers = (uid) => {
     return async (dispatch) => {
         dispatch({ type: GET_REALTIME_USERS_REQUEST });
+        console.log('get realtime users request')
         const db = firebase.firestore()
         const unsubscribe = db.collection("users")
         .onSnapshot((querySnapshot) => {
@@ -57,6 +58,7 @@ export const getRealtimeUsers = (uid) => {
                 payload: { users }
             });
 
+            console.log('get realtime users success')
         });
         return unsubscribe;
     }
@@ -106,12 +108,15 @@ export const getRealtimeConversations = (user) => {
                         type: GET_REALTIME_MESSAGES,
                         payload: { conversations }
                     })
-        
+                    
+        console.log('get realtime messages success')
                 }else{
                     dispatch({
                         type:GET_REALTIME_MESSAGES_FAILURE,
                         payload: { conversations }
                     })
+                    
+        console.log('get realtime messages failulre')
                 } 
             });
         })

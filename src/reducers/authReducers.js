@@ -62,6 +62,7 @@ export const sigin = (user) => {
         dispatch({
             type: USER_LOGIN_REQUEST
         })
+        console.log("user login request")
         firebase.auth().signInWithEmailAndPassword(user.email, user.password)
             .then((data) => {
                 const db = firebase.firestore();
@@ -88,19 +89,19 @@ export const sigin = (user) => {
                                 user: loggedInUser
                             }
                         })
-
+                        console.log("user login success")
                     }).catch(error => {
                         console.log(error)
                     })
             })
             .catch(error => {
-                console.log(error)
                 dispatch({
                     type: USER_LOGIN_FAILURE,
                     payload: {
                         error
                     }
                 })
+                console.log("user login failure")
             })
     }
 }
@@ -113,7 +114,7 @@ export const singup = (user) => {
         dispatch({
             type: USER_LOGIN_REQUEST
         })
-
+        console.log("user login request")
         firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
             .then(data => {
                 console.log(data)
@@ -149,6 +150,7 @@ export const singup = (user) => {
                                         user: loggedInUser
                                     }
                                 })
+                                console.log("user login success")
                             })
                             .catch(error => {
                                 dispatch({
@@ -157,7 +159,7 @@ export const singup = (user) => {
                                         error
                                     }
                                 })
-                                console.log(error)
+                                console.log("user login failure")
                             })
                     })
             })
@@ -197,8 +199,9 @@ export const logout = (uid) => {
     return async dispatch => {
         dispatch({
             type: USER_LOGOUT_REQUEST
+            
         })
-
+        console.log("user logout request")
         const db = firebase.firestore();
 
         db.collection('users')
@@ -214,6 +217,7 @@ export const logout = (uid) => {
                         dispatch({
                             type: USER_LOGOUT_SUCCESS
                         })
+                        console.log("user logout success")
                     })
                     .catch(error => {
                         console.log(error)
@@ -223,6 +227,7 @@ export const logout = (uid) => {
                                 error
                             }
                         })
+                        console.log("user logout failure")
                     })
 
             })
